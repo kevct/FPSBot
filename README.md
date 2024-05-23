@@ -1,2 +1,2 @@
 # FPSBot
-A Discord bot display professional Esports stats from a variety of different FPS games.
+A Discord bot that displays professional Esports statistics from a variety of different FPS games.
