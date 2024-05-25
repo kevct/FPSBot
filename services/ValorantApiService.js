@@ -21,9 +21,13 @@ class ValorantApiService {
         return this._siteUrl;
     }
 
+    get apiLink() {
+        return this._apiLink;
+    }
+
     init() {
         //Load player info
-        fetch(this._apiLink + `/players?limit=all`)
+        fetch(this.apiLink + `/players?limit=all`)
             .then(response => {
                 // Check if the response is ok
                 if (!response.ok) {

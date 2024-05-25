@@ -2,10 +2,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { discordKey, valorantApiLink } = require('./config.json');
 const ValorantApiService = require('./services/ValorantApiService.js');
+const ValorantService = require('./services/ValorantService.js');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 
 module.valorantApiService = new ValorantApiService(valorantApiLink);
 module.valorantApiService.init();
+module.valorantService = new ValorantService(module.valorantApiService);
 
 const client = new Client({
   intents: [
