@@ -81,7 +81,7 @@ class ValorantService {
                     for (let i = 0; i < person.length; i++) {
                         result += `[\:flag_${person[i].country}: ${getPlayerNameAndNickname(person[i].name, person[i].user)}](${person[i].url})`;
                         if (!isPlayers) {
-                            result += ` (${person.tag})`
+                            result += ` (${person[i].tag})`
                         }
                         if (i != person.length - 1) {
                             result += `\n`;
