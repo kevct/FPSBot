@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('player')
-		.setDescription('Displays player statistics')
+		.setDescription('Displays player information')
 		.addStringOption(option =>
 			option.setName('game')
 				.setDescription('The game you wish to view')
@@ -28,7 +28,7 @@ module.exports = {
 				await interaction.reply({ embeds: [embed] });
 				break;
 			default:
-				interaction.reply("That game doesn't hasn't been implemented yet!")
+				interaction.reply("That game hasn't been implemented yet!")
 				break;
 		}
 	},
