@@ -21,8 +21,6 @@ class ValorantService {
 
         return this.valorantApiService.getPlayer(queriedPlayer.id)
             .then(player => {
-                console.log(player);
-
                 const getPlayerNameAndNickname = (name, user) => {
                     let result = '';
                     let nameArr = name.split(' ');
@@ -62,8 +60,6 @@ class ValorantService {
 
         return this.valorantApiService.getTeam(queriedTeam.id)
             .then(team => {
-                console.log(team);
-
                 const getPlayerNameAndNickname = (name, user) => {
                     let result = '';
                     let nameArr = name.split(' ');
@@ -97,7 +93,7 @@ class ValorantService {
                     .setAuthor({ name: 'vlr.gg', iconURL: this.valorantApiService.logoUrl, url: this.valorantApiService.siteUrl })
                     .setThumbnail(team.info.logo)
                     .addFields(
-                        { name: 'Country', value: `${queriedTeam.country}`, inline: true },
+                        { name: 'Event', value: `${queriedTeam.country}`, inline: true },
                         { name: '** **', value: '** **' },
                         { name: 'Players', value: `${getStaffList(team.players, true)}`, inline: true },
                         { name: 'Staff', value: `${getStaffList(team.staff, false)}`, inline: true },
@@ -113,6 +109,53 @@ class ValorantService {
                         }
                     );
             })
+    }
+
+    getUpcomingMatchesEmbed(teamName) {
+        let title = 'Upcoming matches';
+        let matches = null;
+        if (teamName) {
+            matches = this.valorantApiService.matches.filter(m => m.teams[0].name.toLowerCase().replace(' ', '') == teamName.toLowerCase().replace(' ', '') || m.teams[1].name.toLowerCase().replace(' ', '') == teamName.toLowerCase().replace(' ', ''));
+            title += ` for "${teamName}"`;
+        } else {
+            matches = this.valorantApiService.matches;
+        }
+
+        const getColumn = (match, colName) => {
+            let result = '';
+            for (let i = 0; i < match.length; i++) {
+                if (colName == 'teams') {
+                    result += match[i][colName][0] + " vs. " + match[i][colName][1];
+                } else {
+                    result += match[i][colName];
+                }
+            }
+            result += "\n";
+            return result;
+        }
+
+        if (matches.length == 0) {
+            return new EmbedBuilder()
+                .setColor(0xBD3944)
+                .setTitle(title)
+                .setAuthor({ name: 'vlr.gg', iconURL: this.valorantApiService.logoUrl, url: this.valorantApiService.siteUrl })
+                .setDescription('No upcoming matches available.');
+        }
+
+        if (matches.length <= 5) {
+            return new EmbedBuilder()
+                .setColor(0xBD3944)
+                .setTitle(title)
+                .setAuthor({ name: 'vlr.gg', iconURL: this.valorantApiService.logoUrl, url: this.valorantApiService.siteUrl })
+                .addFields(
+                    { name: 'Match', value: `${getColumn(matches, 'teams')}`, inline: true },
+                    { name: 'Event', value: `${getColumn(matches, 'event')}`, inline: true },
+                    { name: 'Tournament', value: `${getColumn(matches, 'tournament')}`, inline: true },
+                    { name: 'Countdown', value: `${getColumn(matches, 'in')}`, inline: true }
+                );
+        } else {
+
+        }
     }
 }
 
