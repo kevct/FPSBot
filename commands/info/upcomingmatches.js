@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const buttonPagination = require('../../utils/buttonPagination');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -23,8 +24,8 @@ module.exports = {
 		switch (game) {
 			case 'valorant':
 				let valService = module.parent.valorantService;
-				let embed = await valService.getUpcomingMatchEmbed(teamName);
-				await interaction.reply({ embeds: [embed] });
+				let embedList = valService.getUpcomingMatchesEmbed(teamName);
+				await buttonPagination(interaction, embedList);	
 				break;
 			default:
 				interaction.reply("That game hasn't been implemented yet!")

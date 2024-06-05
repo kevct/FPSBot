@@ -112,50 +112,71 @@ class ValorantService {
     }
 
     getUpcomingMatchesEmbed(teamName) {
+        let result = [];
         let title = 'Upcoming matches';
         let matches = null;
         if (teamName) {
             matches = this.valorantApiService.matches.filter(m => m.teams[0].name.toLowerCase().replace(' ', '') == teamName.toLowerCase().replace(' ', '') || m.teams[1].name.toLowerCase().replace(' ', '') == teamName.toLowerCase().replace(' ', ''));
             title += ` for "${teamName}"`;
         } else {
-            matches = this.valorantApiService.matches;
+            matches = this.valorantApiService.matches.slice();
         }
 
         const getColumn = (match, colName) => {
             let result = '';
             for (let i = 0; i < match.length; i++) {
-                if (colName == 'teams') {
-                    result += match[i][colName][0] + " vs. " + match[i][colName][1];
-                } else {
-                    result += match[i][colName];
+                switch (colName) {
+                    case 'teams':
+                        result += match[i][colName][0].name + '\nvs. ' + match[i][colName][1].name + '\n\n';
+                        break;
+                    case 'tournament':
+                        let eventNameArr = match[i][colName].split(' ')
+                        for (let j = 0; j < eventNameArr.length; j++) {
+                            result += eventNameArr[j] + ' ';
+                            if (j == Math.floor((eventNameArr.length - 2) / 2)) {
+                                result += '\n';
+                            }
+                        }
+                        result += '\n\n';
+                        break;
+                    case 'in':
+                        result += match[i][colName] + '\n\n\n';
+                        break;
                 }
             }
-            result += "\n";
             return result;
         }
 
         if (matches.length == 0) {
-            return new EmbedBuilder()
+            result.push(new EmbedBuilder()
                 .setColor(0xBD3944)
                 .setTitle(title)
                 .setAuthor({ name: 'vlr.gg', iconURL: this.valorantApiService.logoUrl, url: this.valorantApiService.siteUrl })
-                .setDescription('No upcoming matches available.');
+                .setDescription('No upcoming matches available.'));
         }
 
-        if (matches.length <= 5) {
-            return new EmbedBuilder()
+        while (matches.length > 0) {
+            let matchSet = []
+            for (let i = 0; i < 5; i++) {
+                let tmp = matches.shift();
+                if (!tmp) {
+                    break;
+                }
+                matchSet.push(tmp);
+            }
+            result.push(new EmbedBuilder()
                 .setColor(0xBD3944)
                 .setTitle(title)
                 .setAuthor({ name: 'vlr.gg', iconURL: this.valorantApiService.logoUrl, url: this.valorantApiService.siteUrl })
                 .addFields(
-                    { name: 'Match', value: `${getColumn(matches, 'teams')}`, inline: true },
-                    { name: 'Event', value: `${getColumn(matches, 'event')}`, inline: true },
-                    { name: 'Tournament', value: `${getColumn(matches, 'tournament')}`, inline: true },
-                    { name: 'Countdown', value: `${getColumn(matches, 'in')}`, inline: true }
-                );
-        } else {
-
+                    { name: 'Match', value: `${getColumn(matchSet, 'teams')}`, inline: true },
+                    //{ name: 'Event', value: `${getColumn(matches, 'event')}`, inline: true },
+                    { name: 'Tournament', value: `${getColumn(matchSet, 'tournament')}`, inline: true },
+                    { name: 'Countdown', value: `${getColumn(matchSet, 'in')}`, inline: true }
+                ));
         }
+
+        return result;
     }
 }
 

@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { discordKey, valorantApiLink } = require('./config.json');
-const ValorantApiService = require('./services/ValorantApiService.js');
+const ValorantApiService = require('./services/api/ValorantApiService.js');
 const ValorantService = require('./services/ValorantService.js');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 
